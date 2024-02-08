@@ -1,8 +1,12 @@
-from pymongo import MongoClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
-DATABASE_URL = 'mongodb://localhost:27017'
-client = MongoClient(DATABASE_URL)
+SQLALCHEMY_DATABASE_URL = 'sqlite:///xwitter.db'
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 
-conn_for_users = MongoClient('mongodb://localhost:27017/')
-db = client['local']
-users_collection = db['users']
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()

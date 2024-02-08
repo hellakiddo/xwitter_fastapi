@@ -1,14 +1,17 @@
 from fastapi import FastAPI
+import models
+from db import engine
 
-from posts.router import posts
-from user.router import users
-from auth.router import auth
+# from posts.router import posts
+# from user.router import users
+from auth.auth_users_router import router
 
 
 app = FastAPI()
-app.include_router(posts)
-app.include_router(users)
-app.include_router(auth)
+models.Base.metadata.create_all(bind=engine)
+# app.include_router(posts)
+# app.include_router(users)
+app.include_router(router)
 
 
 if __name__ == "__main__":
