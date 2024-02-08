@@ -13,3 +13,4 @@ async def home():
 async def add_post(post: Post):
     client.local.posts.insert_one(post.dict())
     return post.dict()
+
