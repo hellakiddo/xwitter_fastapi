@@ -1,4 +1,7 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
+from datetime import datetime
+
+from DateTime import DateTime
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from db import Base
 
@@ -22,6 +25,7 @@ class Post(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String)
+    created_at = Column(Date, default=datetime.date)
     author_id = Column(Integer, ForeignKey("users.id"))
 
     author = relationship("User", back_populates="posts")

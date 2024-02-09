@@ -114,3 +114,5 @@ async def change_password(
     return JSONResponse(
         "Пароль изменен."
     )
+
+
