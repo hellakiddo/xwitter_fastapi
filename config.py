@@ -1,0 +1,5 @@
+DB_USER='postgres'
+DB_PASS='8888'
+DB_HOST='localhost'
+DB_PORT='8888'
+DB_NAME='postgres'
