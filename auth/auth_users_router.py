@@ -1,36 +1,23 @@
 from datetime import timedelta, datetime
 from http import HTTPStatus
-from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from passlib.handlers.sha2_crypt import sha256_crypt
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
 from db import SessionLocal
+from .auth_models import CreateUser, Token, UserPassword
 from models import User
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 
-router = APIRouter(prefix='/auth',tags=['auth'])
+auth = APIRouter(prefix='/auth',tags=['auth'])
 
 SECRET_KEY = '2424245454545'
 ALGORITHM = 'HS256'
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
-
-class CreateUserRequest(BaseModel):
-    username: str
-    email: str
-    first_name: str
-    last_name: str
-    password: str
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
 
 
 def get_db():
@@ -39,9 +26,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-db_dependency = Annotated[Session, Depends(get_db)]
 
 
 def authenticate_user(username: str, password: str, db: Session):
@@ -76,8 +60,8 @@ async def get_current_user(token: str = Depends(oauth2_bearer)):
         )
 
 
-@router.post("/users", response_model=None, status_code=HTTPStatus.CREATED)
-async def create_user(create_user_request: CreateUserRequest, db: Session = Depends(get_db)):
+@auth.post("/users", response_model=None, status_code=HTTPStatus.CREATED)
+async def create_user(create_user_request: CreateUser, db: Session = Depends(get_db)):
     create_user_model = User(
         email=create_user_request.email,
         username=create_user_request.username,
@@ -94,14 +78,39 @@ async def create_user(create_user_request: CreateUserRequest, db: Session = Depe
     )
 
 
-@router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+@auth.post("/token", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED,
-                            detail='Не тот токен или что то еще не так.')
+                            detail='Пароль или username не тот.')
     token = create_access_token(
         user.username, user.id, 'user', timedelta(minutes=20)
     )
 
     return {'access_token': token, 'token_type': 'bearer'}
+
+
+@auth.put("/change_password", status_code=HTTPStatus.OK)
+async def change_password(
+    user_password: UserPassword,
+    user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if user is None:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Проблемы аутентификации.'
+        )
+    user_model = db.query(User).filter(User.id == user.get('id')).first()
+    if not sha256_crypt.verify(user_password.password, user_model.hashed_password):
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Старый пароль неверный.'
+        )
+    user_model.hashed_password = sha256_crypt.hash(user_password.new_password)
+    db.add(user_model)
+    db.commit()
+    return JSONResponse(
+        "Пароль изменен."
+    )
