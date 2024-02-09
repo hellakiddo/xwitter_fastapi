@@ -4,28 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap">
-  <title>Xwitter Fast API</title>
-  <style>
-    body {
-      font-family: 'Orbitron', sans-serif;
-      background-color: #0f0f0f; /* Cyberpunk-style background color */
-      color: #33933; /* Cyberpunk-style text color */
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 3em;
-      margin-top: 2em;
-    }
-
-    p {
-      margin: 1em 0;
-    }
-
-    img {
-      margin: 0.5em;
-    }
-  </style>
 </head>
 <body>
   <div>
