@@ -1,70 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap">
-</head>
-<body>
-  <div>
-    <h1>Xwitter Fast API</h1>
-  </div>
+# Xwitter Fast API
 
-  <p>
-    <a href="https://fastapi.tiangolo.com/" target="_blank">
-      <img src="https://img.shields.io/badge/FastAPI-%23FF3535.svg?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
-    </a>
-    <a href="https://www.uvicorn.org/" target="_blank">
-      <img src="https://img.shields.io/badge/Uvicorn-%23FFFFFF.svg?style=for-the-badge&logo=uvicorn&logoColor=black" alt="Uvicorn">
-    </a>
-    <a href="https://www.sqlalchemy.org/" target="_blank">
-      <img src="https://img.shields.io/badge/SQLAlchemy-%23FF3535.svg?style=for-the-badge&logo=sqlalchemy&logoColor=white" alt="SQLAlchemy">
-    </a>
-    <a href="https://www.python.org/" target="_blank">
-      <img src="https://img.shields.io/badge/Python-%23FFFFFF.svg?style=for-the-badge&logo=python&logoColor=black" alt="Python">
-    </a>
-    <a href="https://jwt.io/" target="_blank">
-      <img src="https://img.shields.io/badge/JWT%20Token-%23FF3535.svg?style=for-the-badge&logo=jwt&logoColor=white" alt="JWT Token">
-    </a>
-  </p>
+[![FastAPI](https://img.shields.io/badge/FastAPI-%23FF3535.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Uvicorn](https://img.shields.io/badge/Uvicorn-%23FFFFFF.svg?style=for-the-badge&logo=uvicorn&logoColor=black)](https://www.uvicorn.org/)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-%23FF3535.svg?style=for-the-badge&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/)
+[![Python](https://img.shields.io/badge/Python-%23FFFFFF.svg?style=for-the-badge&logo=python&logoColor=black)](https://www.python.org/)
+[![JWT Token](https://img.shields.io/badge/JWT%20Token-%23FF3535.svg?style=for-the-badge&logo=jwt&logoColor=white)](https://jwt.io/)
+[![Alembic](https://img.shields.io/badge/Alembic-%23FFFFFF.svg?style=for-the-badge)](https://alembic.sqlalchemy.org/)
 
-  <hr>
+---
 
-  <p>
-    <strong>FastApi документация:</strong>
-    <a href="http://127.0.0.1/docs/" target="_blank">http://127.0.0.1/docs/</a>
-  </p>
+**FastApi документация:** [http://127.0.0.1/docs/](http://127.0.0.1/docs/)
 
-  <p>
-    <strong>Клонируем репозиторий:</strong>
-    <code>git clone git@github.com:hellakiddo/xwitter_fastapi.git</code>
-  </p>
+**Клонируем репозиторий:** `git clone git@github.com:hellakiddo/xwitter_fastapi.git`
 
-  <p>
-    <strong>Запускаем Uvicorn:</strong>
-    <code>python main.py</code>
-  </p>
+**Запускаем Uvicorn:** `python main.py`
 
-  <p>
-    <strong>Проект доступен по адресу:</strong>
-    <a href="http://127.0.0.1" target="_blank">http://127.0.0.1</a>
-  </p>
+**Проект доступен по адресу:** [http://127.0.0.1](http://127.0.0.1)
 
-  <hr>
+---
 
-  <p>
-    <strong>Нурмат кызы Алмаш:</strong>
-    <a href="https://github.com/Mash556" target="_blank">https://github.com/Mash556</a>
-  </p>
+**Нурмат кызы Алмаш:** [https://github.com/Mash556](https://github.com/Mash556)
 
-  <p>
-    <strong>Абдурашидова Алина:</strong>
-    <a href="https://github.com/alinaabdurashidova" target="_blank">https://github.com/alinaabdurashidova</a>
-  </p>
+**Абдурашидова Алина:** [https://github.com/alinaabdurashidova](https://github.com/alinaabdurashidova)
 
-  <p>
-    <strong>Сосламбеков Амир:</strong>
-    <a href="https://github.com/hellakiddo" target="_blank">https://github.com/hellakiddo</a>
-  </p>
-</body>
-</html>
+**Сосламбеков Амир:** [https://github.com/hellakiddo](https://github.com/hellakiddo)
