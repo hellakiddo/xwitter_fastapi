@@ -85,7 +85,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED,
                             detail='Пароль или username не тот.')
     token = create_access_token(
-        user.username, user.id, 'user', timedelta(minutes=20)
+        user.username, user.id, 'profiles', timedelta(minutes=20)
     )
 
     return {'access_token': token, 'token_type': 'bearer'}

@@ -13,3 +13,15 @@ class User(Base):
     last_name = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+
+    posts = relationship("Post", back_populates="author")
+
+
+class Post(Base):
+    __tablename__ = "posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String)
+    author_id = Column(Integer, ForeignKey("users.id"))
+
+    author = relationship("User", back_populates="posts")

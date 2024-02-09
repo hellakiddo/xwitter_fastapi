@@ -3,8 +3,8 @@ import models
 from db import engine
 
 # from posts.router import posts
-# from user.router import users
-from auth.auth_users_router import auth
+# from profiles.router import users
+from auth.auth_router import auth
 
 
 app = FastAPI()
