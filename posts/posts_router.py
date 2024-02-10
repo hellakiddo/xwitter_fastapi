@@ -140,3 +140,4 @@ async def get_posts(db: AsyncSession = Depends(get_async_session)):
         )
         serialized_posts = [serialize_post(post) for post in all_posts.unique().scalars().all()]
         return serialized_posts
+
