@@ -54,6 +54,7 @@ class User(Base):
     last_name = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    activation_code = Column(String, unique=True, nullable=False)
 
     followers = relationship("Subscription", foreign_keys=[Subscription.following_id], back_populates="follower")
     following = relationship("Subscription", foreign_keys=[Subscription.follower_id], back_populates="following")

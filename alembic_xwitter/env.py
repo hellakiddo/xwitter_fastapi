@@ -1,14 +1,11 @@
-import os
-import sys
 from logging.config import fileConfig
 
 import sqlalchemy
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from models import Comment
+from models import *
 from db import metadata
-sys.path.append(os.path.join(sys.path[0], 'src'))
 
 from config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
 
@@ -26,7 +23,7 @@ config.set_section_option(section, "DB_PASS", DB_PASS)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = Comment.metadata
+target_metadata = metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
