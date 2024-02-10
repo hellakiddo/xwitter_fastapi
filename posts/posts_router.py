@@ -23,12 +23,6 @@ async def create_post(
     db: AsyncSession = Depends(get_async_session)
 ):
     user_id = user.get('id')
-    if user is None:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Не аутентифицирован.'
-        )
-
     new_post = Post(
         text=post.text,
         author_id=user_id,
@@ -75,16 +69,10 @@ async def create_comment(
     db: AsyncSession = Depends(get_async_session),
     post_id: int = Path(...),
 ):
-    user_id = user.get('id')
-    if user is None:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Не аутентифицирован.'
-        )
 
     new_comment = Comment(
         text=comment.text,
-        user_id=user_id,
+        user_id=user["id"],
         post_id=post_id,
         created_at=datetime.datetime.now()
     )

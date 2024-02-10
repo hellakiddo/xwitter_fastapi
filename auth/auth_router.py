@@ -51,7 +51,7 @@ async def get_current_user(token: str = Depends(oauth2_bearer)):
     except JWTError:
         raise HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Такого незнаю.'
+            detail='Токен сдох кажется.'
         )
 
 

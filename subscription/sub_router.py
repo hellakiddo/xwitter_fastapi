@@ -15,23 +15,19 @@ from .sub_models import SubscriptionCreate, AllSubscriptionResponse
 subscriptions = APIRouter(tags=['subscriptions'])
 
 
-@subscriptions.post("/users/{user_id}/create_subscription", response_model=SubscriptionCreate, status_code=HTTPStatus.CREATED)
+@subscriptions.post(
+    "/users/{user_id}/create_subscription",
+    response_model=SubscriptionCreate, status_code=HTTPStatus.CREATED
+)
 async def create_subscription(
     user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
     user_id: int = Path(...),
 ):
-    if user is None:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Не аутентифицирован.'
-        )
-
     new_subscription = Subscription(
         follower_id=user['id'],
         following_id=user_id
     )
-
     async with db.begin() as tx:
         db.add(new_subscription)
         await tx.commit()
@@ -42,7 +38,10 @@ async def create_subscription(
     return JSONResponse('Подписка создана', status_code=HTTPStatus.CREATED)
 
 
-@subscriptions.delete("/subscriptions/{subscription_id}/delete_subscription", status_code=HTTPStatus.NO_CONTENT)
+@subscriptions.delete(
+    "/subscriptions/{subscription_id}/delete_subscription",
+    status_code=HTTPStatus.NO_CONTENT
+)
 async def delete_subscription(
     user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
@@ -59,7 +58,6 @@ async def delete_subscription(
             status_code=HTTPStatus.NOT_FOUND,
             detail='Подписка не найдена или нет прав на удаление.'
         )
-
     await db.delete(subscription)
     await db.commit()
 
@@ -73,12 +71,6 @@ async def get_subscriptions(
         db: AsyncSession = Depends(get_async_session),
         user_id: int = Path(...),
 ):
-    if user is None:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Не аутентифицирован.'
-        )
-
     subscriptions_query = select(Subscription).filter(
         Subscription.follower_id == user_id
     )
@@ -109,12 +101,6 @@ async def current_user_subscriptions(
         user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_async_session),
 ):
-    if user is None:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Не аутентифицирован.'
-        )
-
     async with db.begin():
         subscriptions_query = select(Subscription).filter(
             Subscription.follower_id == user.get('id')

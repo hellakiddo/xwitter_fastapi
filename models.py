@@ -15,6 +15,33 @@ class Subscription(Base):
     follower = relationship("User", foreign_keys=[follower_id], back_populates="following")
     following = relationship("User", foreign_keys=[following_id], back_populates="followers")
 
+class GroupSubscription(Base):
+    __tablename__ = "group_subscriptions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    group_id = Column(Integer, ForeignKey("groups.id"))
+
+    user = relationship("User", back_populates="group_subscriptions")
+    group = relationship("Group", back_populates="user_subscriptions")
+
+class Group(Base):
+    __tablename__ = "groups"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    description = Column(String)
+    author_id = Column(Integer, ForeignKey("users.id"))
+
+    user_subscriptions = relationship("GroupSubscription", back_populates="group")
+    posts = relationship("Post", back_populates="group")
+    author = relationship("User", back_populates="groups")
+    members = relationship(
+        "User", secondary="group_subscriptions",
+        back_populates="groups",
+        overlaps="group"
+    )
+
 class User(Base):
     __tablename__ = "users"
 
@@ -30,6 +57,12 @@ class User(Base):
     following = relationship("Subscription", foreign_keys=[Subscription.follower_id], back_populates="following")
     comments = relationship("Comment", back_populates="user")
     posts = relationship("Post", back_populates="author")
+    group_subscriptions = relationship("GroupSubscription", back_populates="user")
+    groups = relationship(
+        "Group", secondary="group_subscriptions",
+        back_populates="members",
+        overlaps="user",
+    )
 
 class Comment(Base):
     __tablename__ = "comments"
@@ -50,6 +83,8 @@ class Post(Base):
     text = Column(String)
     created_at = Column(Date, default=datetime.date)
     author_id = Column(Integer, ForeignKey("users.id"))
+    group_id = Column(Integer, ForeignKey("groups.id"), nullable=True)
 
     comments = relationship("Comment", back_populates="post")
     author = relationship("User", back_populates="posts")
+    group = relationship("Group", back_populates="posts")
