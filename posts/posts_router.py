@@ -87,7 +87,7 @@ async def create_comment(
         id=new_comment.id,
         text=new_comment.text,
         user_id=new_comment.user_id,
-        post_id=new_comment.post_id,
+        post_id=post_id,
         created_at=new_comment.created_at
     )
 
