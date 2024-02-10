@@ -11,7 +11,7 @@ from auth.auth_router import get_current_user
 from db import get_async_session
 from models import Post, Comment
 from .posts_models import PostCreate, CommentCreate, CommentResponse, PostResponse
-from .serializers import serialize
+from .serializers import serialize_post
 
 posts = APIRouter(tags=['posts'])
 
@@ -135,6 +135,8 @@ async def delete_comment(
 @posts.get("/")
 async def get_posts(db: AsyncSession = Depends(get_async_session)):
     async with db.begin():
-        all_posts = await db.execute(select(Post).options(joinedload(Post.comments)))
-        serialized_posts = [serialize(post) for post in all_posts.unique().scalars().all()]
+        all_posts = await db.execute(
+            select(Post).options(joinedload(Post.comments), joinedload(Post.author))
+        )
+        serialized_posts = [serialize_post(post) for post in all_posts.unique().scalars().all()]
         return serialized_posts

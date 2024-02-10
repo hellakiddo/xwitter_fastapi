@@ -1,15 +1,13 @@
 from fastapi import FastAPI
-import models
-from db import engine
 
 from posts.posts_router import posts
-# from feed.router import users
+from subscription.sub_router import subscriptions
 from auth.auth_router import auth
 
 
 app = FastAPI()
 app.include_router(posts)
-# app.include_router(users)
+app.include_router(subscriptions)
 app.include_router(auth)
 
 
