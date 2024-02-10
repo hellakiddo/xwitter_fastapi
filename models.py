@@ -37,9 +37,11 @@ class Group(Base):
     posts = relationship("Post", back_populates="group")
     author = relationship("User", back_populates="groups")
     members = relationship(
-        "User", secondary="group_subscriptions",
+        "User",
+        secondary="group_subscriptions",
         back_populates="groups",
-        overlaps="group"
+        overlaps="group_subscriptions,user_subscriptions",
+        viewonly=True
     )
 
 class User(Base):
@@ -59,9 +61,11 @@ class User(Base):
     posts = relationship("Post", back_populates="author")
     group_subscriptions = relationship("GroupSubscription", back_populates="user")
     groups = relationship(
-        "Group", secondary="group_subscriptions",
+        "Group",
+        secondary="group_subscriptions",
         back_populates="members",
-        overlaps="user",
+        overlaps="group_subscriptions,user_subscriptions",
+        viewonly=True
     )
 
 class Comment(Base):

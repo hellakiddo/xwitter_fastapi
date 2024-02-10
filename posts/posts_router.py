@@ -40,17 +40,16 @@ async def create_post(
 
 @posts.delete("/posts/{post_id}/delete_post", status_code=HTTPStatus.NO_CONTENT)
 async def delete_post(
-    user: dict = Depends(get_current_user),
+    user: dict = Depends(get_current_user, ),
     db: AsyncSession = Depends(get_async_session)
 ):
     user_id = user.get('id')
     post = await db.execute(select(Post).filter(Post.author_id == user_id))
     post = post.scalars().first()
-
     if not post:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail='Нет прав на его удаление.'
+            detail='Нет прав на удаление или пост не найден. Так быть не должно знаю((( Тороплюсь просто.'
         )
     if not db.is_active:
         async with db.begin():
