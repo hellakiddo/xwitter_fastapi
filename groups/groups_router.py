@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from starlette.responses import JSONResponse
 
 from auth.auth_router import get_current_user
@@ -125,3 +126,66 @@ async def create_group_post(
         images_collection.insert_one(image_document)
 
     return new_post
+
+
+@groups_router.post("/group/{group_id}/subscribe", status_code=HTTPStatus.NO_CONTENT)
+async def subscribe_to_group(
+        group_id: int,
+        user: dict = Depends(get_current_user),
+        db: AsyncSession = Depends(get_async_session)
+):
+    user_id = user.get('id')
+    try:
+        async with db.begin():
+            is_subscribed = await db.execute(
+                select(exists().where((GroupSubscription.group_id == group_id) & (GroupSubscription.user_id == user_id)))
+            )
+            if is_subscribed.scalar():
+                raise HTTPException(
+                    status_code=HTTPStatus.CONFLICT,
+                    detail="Вы уже подписаны на эту группу."
+                )
+            new_subscription = GroupSubscription(user_id=user_id, group_id=group_id)
+            db.add(new_subscription)
+            await db.commit()
+
+    except IntegrityError as e:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail="Вы уже подписаны на эту группу."
+        )
+
+    return JSONResponse(content="Вы подписались на группу")
+
+
+@groups_router.delete("/group/{group_id}/unsubscribe", status_code=HTTPStatus.NO_CONTENT)
+async def unsubscribe_from_group(
+        group_id: int,
+        user: dict = Depends(get_current_user),
+        db: AsyncSession = Depends(get_async_session)
+):
+    user_id = user.get('id')
+    try:
+        async with db.begin():
+            subscription = await db.execute(
+                select(GroupSubscription).filter(
+                    (GroupSubscription.group_id == group_id) & (GroupSubscription.user_id == user_id)
+                ).options(selectinload(GroupSubscription.group))
+            )
+            subscription = subscription.scalars().first()
+
+            if not subscription:
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail="Вы не подписаны на эту группу."
+                )
+            await db.delete(subscription)
+            await db.commit()
+
+    except IntegrityError as e:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Вы не подписаны на эту группу."
+        )
+
+    return JSONResponse(content="Вы отписались от группы")
