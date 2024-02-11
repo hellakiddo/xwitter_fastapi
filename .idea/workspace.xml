@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="72c0bfbf-9f61-46cc-8a17-590397c9b163" name="Changes" comment="" />
+    <list default="true" id="72c0bfbf-9f61-46cc-8a17-590397c9b163" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/auth_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/auth/auth_router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/groups/groups_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/groups/groups_router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/groups/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/groups/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/posts_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/posts/posts_models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/posts_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/posts/posts_router.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

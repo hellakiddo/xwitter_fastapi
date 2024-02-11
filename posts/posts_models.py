@@ -6,6 +6,7 @@ from typing import Optional
 class PostCreate(BaseModel):
     text: str
     image: Optional[str]
+    group_id: Optional[int]
 
 
 class PostResponse(BaseModel):

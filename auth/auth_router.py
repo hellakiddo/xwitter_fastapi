@@ -3,6 +3,7 @@ from datetime import timedelta, datetime
 from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from passlib.handlers.sha2_crypt import sha256_crypt
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import JSONResponse
 from sqlalchemy.future import select
@@ -83,19 +84,26 @@ async def create_user(create_user_request: CreateUser, db: AsyncSession = Depend
         is_active=False,
         activation_code=secrets.token_urlsafe(32)
     )
-    async with db.begin():
-        db.add(create_user_model)
-        await db.commit()
+    try:
+        async with db.begin():
+            db.add(create_user_model)
+            await db.commit()
 
-    send_confirm_email_task.delay(
-        create_user_request.email,
-        code=create_user_model.activation_code
-    )
+        send_confirm_email_task.delay(
+            create_user_request.email,
+            code=create_user_model.activation_code
+        )
 
-    return JSONResponse(
-        content="Пользователь создан. На почту пришло письмо активации.",
-        status_code=HTTPStatus.CREATED
-    )
+        return JSONResponse(
+            content="Пользователь создан. На почту пришло письмо активации.",
+            status_code=HTTPStatus.CREATED
+        )
+
+    except IntegrityError as e:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail="Пользователь с таким именем или адресом электронной почты уже существует."
+        )
 
 
 @auth.post("/token", response_model=Token)

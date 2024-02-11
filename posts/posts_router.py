@@ -53,11 +53,12 @@ async def create_post(
 
 @posts.delete("/posts/{post_id}/delete_post", status_code=HTTPStatus.NO_CONTENT)
 async def delete_post(
+    post_id: int = Path(...),
     user: dict = Depends(get_current_user, ),
     db: AsyncSession = Depends(get_async_session)
 ):
     user_id = user.get('id')
-    post = await db.execute(select(Post).filter(Post.author_id == user_id))
+    post = await db.execute(select(Post).filter(Post.author_id == user_id, Post.id == post_id))
     post_found = post.scalars().first()
     if not post_found:
         raise HTTPException(
