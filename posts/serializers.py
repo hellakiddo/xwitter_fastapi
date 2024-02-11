@@ -1,3 +1,5 @@
+import base64
+
 from models import Post, Comment, User, Group
 
 def serialize_user(user: User) -> dict:
@@ -22,15 +24,19 @@ def serialize_group(group: Group) -> dict:
         "name": group.name,
         "description": group.description,
     }
+def serialize_image(image):
+    return {
+        "post_id": image.get("post_id", ""),
+        "image_data": base64.b64encode(image.get("image_data", b"")).decode("utf-8"),
+        "created_at": image.get("created_at", ""),
+    }
 
-def serialize_post(post: Post) -> dict:
-    serialized_post = {
-        "id": post.id,
+def serialize_post(post):
+    return {
+        "id": str(post.id),
         "text": post.text,
-        "created_at": post.created_at,
         "author": serialize_user(post.author),
         "comments": [serialize_comment(comment) for comment in post.comments],
+        "created_at": post.created_at,
+        "images": [serialize_image(image) for image in post.images],
     }
-    if hasattr(post, 'group') and post.group:
-        serialized_post["group"] = serialize_group(post.group)
-    return serialized_post

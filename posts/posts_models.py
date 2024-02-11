@@ -1,9 +1,12 @@
+from fastapi import UploadFile
 from pydantic import BaseModel
 from datetime import datetime, date
 from typing import Optional
 
 class PostCreate(BaseModel):
     text: str
+    image: Optional[str]
+
 
 class PostResponse(BaseModel):
     id: int

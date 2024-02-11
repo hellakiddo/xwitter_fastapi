@@ -1,6 +1,8 @@
+import base64
 import datetime
 from http import HTTPStatus
 
+from bson import Binary
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from fastapi import APIRouter, Depends, HTTPException, Path
@@ -8,7 +10,7 @@ from starlette.responses import JSONResponse
 from sqlalchemy.future import select
 
 from auth.auth_router import get_current_user
-from db import get_async_session
+from db import get_async_session, images_collection
 from models import Post, Comment
 from .posts_models import PostCreate, CommentCreate, CommentResponse, PostResponse
 from .serializers import serialize_post
@@ -20,13 +22,16 @@ posts = APIRouter(tags=['posts'])
 async def create_post(
     post: PostCreate,
     user: dict = Depends(get_current_user),
-    db: AsyncSession = Depends(get_async_session)
+    db: AsyncSession = Depends(get_async_session),
 ):
+    image_data = None
+    if post.image:
+        image_data = base64.b64decode(post.image)
     user_id = user.get('id')
     new_post = Post(
         text=post.text,
         author_id=user_id,
-        created_at=datetime.datetime.now()
+        created_at=datetime.datetime.now(),
     )
 
     async with db.begin() as tx:
@@ -35,6 +40,14 @@ async def create_post(
 
     async with db.begin():
         await db.refresh(new_post)
+
+    if image_data:
+        image_document = {
+            "post_id": str(new_post.id),
+            "image_data": Binary(image_data),
+            "created_at": datetime.datetime.now()
+        }
+        images_collection.insert_one(image_document)
 
     return new_post
 
@@ -45,18 +58,18 @@ async def delete_post(
 ):
     user_id = user.get('id')
     post = await db.execute(select(Post).filter(Post.author_id == user_id))
-    post = post.scalars().first()
-    if not post:
+    post_found = post.scalars().first()
+    if not post_found:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail='Нет прав на удаление или пост не найден. Так быть не должно знаю((( Тороплюсь просто.'
+            detail='Нет прав на удаление или пост не найден.'
         )
     if not db.is_active:
         async with db.begin():
-            await db.delete(post)
+            await db.delete(post_found)
             await db.commit()
     else:
-        await db.delete(post)
+        await db.delete(post_found)
         await db.commit()
 
     return JSONResponse(content='Пост удален.')
@@ -125,7 +138,16 @@ async def get_posts(db: AsyncSession = Depends(get_async_session)):
         all_posts = await db.execute(
             select(Post).options(joinedload(Post.comments), joinedload(Post.author))
         )
-        serialized_posts = [serialize_post(post) for post in all_posts.unique().scalars().all()]
+        posts = all_posts.unique().scalars().all()
+        for post in posts:
+            post_id = str(post.id)
+            images = await get_images_from_mongodb(post_id)
+            post.images = images
+        serialized_posts = [serialize_post(post) for post in posts]
         return serialized_posts
 
 
+async def get_images_from_mongodb(post_id: str):
+    images_cursor = images_collection.find({"post_id": post_id})
+    images = [image for image in images_cursor]
+    return images
