@@ -4,6 +4,7 @@ from posts.posts_router import posts
 from subscription.sub_router import subscriptions
 from auth.auth_router import auth
 from groups.groups_router import groups_router
+from feed.feed_router import feed_router
 
 
 app = FastAPI()
@@ -11,6 +12,7 @@ app.include_router(posts)
 app.include_router(subscriptions)
 app.include_router(auth)
 app.include_router(groups_router)
+app.include_router(feed_router)
 
 
 if __name__ == "__main__":

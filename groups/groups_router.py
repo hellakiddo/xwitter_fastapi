@@ -68,7 +68,6 @@ async def delete_group(
             status_code=HTTPStatus.FORBIDDEN,
             detail="Вы не создали эту группу. Удалить нельзя."
         )
-
     await db.delete(group)
     await db.commit()
 
