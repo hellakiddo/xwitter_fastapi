@@ -3,7 +3,7 @@ from datetime import datetime
 from http import HTTPStatus
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile, Path
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,9 +14,9 @@ from auth.auth_router import get_current_user
 from db import get_async_session
 from posts.posts_models import PostResponse
 from posts.posts_router import save_image_async
-from .groups_models import GroupResponse, GroupCreate
+from .groups_models import GroupResponse, GroupCreate, GroupPostResponse
 from models import Group, Post, GroupSubscription
-from .serializers import serialize_group, serialize_group_posts
+from .serializers import serialize_group
 
 groups_router = APIRouter(tags=["groups"])
 
@@ -85,10 +85,11 @@ async def get_group_posts(group_id: int, db: AsyncSession = Depends(get_async_se
     return group_posts
 
 
-@groups_router.post("/group/{group_id}/create_post", response_model=PostResponse, status_code=HTTPStatus.CREATED)
+@groups_router.post("/group/{group_id}/create_post", response_model=GroupPostResponse, status_code=HTTPStatus.CREATED)
 async def create_post(
     text: str = Form(...),
     image: UploadFile = Form(...),
+    group_id: int = Path(...),
     user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
@@ -99,7 +100,8 @@ async def create_post(
         text=text,
         author_id=user_id,
         created_at=datetime.now(),
-        image=image.filename
+        image=image_filename,
+        group_id=group_id
     )
     async with db.begin() as tx:
         db.add(new_post)
