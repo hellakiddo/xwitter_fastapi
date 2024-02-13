@@ -1,55 +1,59 @@
-import base64
 import datetime
+import os
+import uuid
 from http import HTTPStatus
+from typing import List
 
-from bson import Binary
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Path, Form, UploadFile
+from sqlalchemy.orm import selectinload, joinedload
 from starlette.responses import JSONResponse
 from sqlalchemy.future import select
 
 from auth.auth_router import get_current_user
-from db import get_async_session, images_collection
+from db import get_async_session
 from models import Post, Comment
-from .posts_models import PostCreate, CommentCreate, CommentResponse, PostResponse
-from .serializers import serialize_post
+from .posts_models import CommentCreate, CommentResponse, PostResponse, PostWithCommentsResponse
 
 posts = APIRouter(tags=['posts'])
 
 
 @posts.post("/create_post", response_model=PostResponse, status_code=HTTPStatus.CREATED)
 async def create_post(
-    post: PostCreate,
+    text: str = Form(...),
+    image: UploadFile = Form(...),
     user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
 ):
-    image_data = None
-    if post.image:
-        image_data = base64.b64decode(post.image)
+    image_data = await image.read()
+    image_filename = f"{uuid.uuid4()}.jpg"
     user_id = user.get('id')
     new_post = Post(
-        text=post.text,
+        text=text,
         author_id=user_id,
         created_at=datetime.datetime.now(),
+        image=image_filename
     )
-
     async with db.begin() as tx:
         db.add(new_post)
         await tx.commit()
 
     async with db.begin():
         await db.refresh(new_post)
-
     if image_data:
-        image_document = {
-            "post_id": str(new_post.id),
-            "image_data": Binary(image_data),
-            "created_at": datetime.datetime.now()
-        }
-        images_collection.insert_one(image_document)
+        image_url = await save_image_async(image_data, image_filename)
+        new_post.image = image_url
 
     return new_post
+
+
+async def save_image_async(image_data, image_filename):
+    upload_folder = "uploaded_images"
+    os.makedirs(upload_folder, exist_ok=True)
+    image_path = os.path.join(upload_folder, image_filename)
+    with open(image_path, "wb") as img_file:
+        img_file.write(image_data)
+    return f"/uploaded_images/{image_filename}"
 
 @posts.delete("/posts/{post_id}/delete_post", status_code=HTTPStatus.NO_CONTENT)
 async def delete_post(
@@ -133,22 +137,9 @@ async def delete_comment(
 
     return JSONResponse(content="Удален коммент")
 
-@posts.get("/")
-async def get_posts(db: AsyncSession = Depends(get_async_session)):
+@posts.get("/", response_model=List[PostWithCommentsResponse])
+async def get_all_posts(db: AsyncSession = Depends(get_async_session)):
     async with db.begin():
-        all_posts = await db.execute(
-            select(Post).options(joinedload(Post.comments), joinedload(Post.author))
-        )
+        all_posts = await db.execute(select(Post).options(joinedload(Post.comments)))
         posts = all_posts.unique().scalars().all()
-        for post in posts:
-            post_id = str(post.id)
-            images = await get_images_from_mongodb(post_id)
-            post.images = images
-        serialized_posts = [serialize_post(post) for post in posts]
-        return serialized_posts
-
-
-async def get_images_from_mongodb(post_id: str):
-    images_cursor = images_collection.find({"post_id": post_id})
-    images = [image for image in images_cursor]
-    return images
+    return posts

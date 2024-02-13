@@ -1,10 +1,9 @@
-import base64
+import uuid
 from datetime import datetime
 from http import HTTPStatus
 from typing import List
 
-from bson import Binary
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,8 +11,9 @@ from sqlalchemy.orm import selectinload
 from starlette.responses import JSONResponse
 
 from auth.auth_router import get_current_user
-from db import get_async_session, images_collection
-from posts.posts_models import PostResponse, PostCreate
+from db import get_async_session
+from posts.posts_models import PostResponse
+from posts.posts_router import save_image_async
 from .groups_models import GroupResponse, GroupCreate
 from models import Group, Post, GroupSubscription
 from .serializers import serialize_group, serialize_group_posts
@@ -74,7 +74,7 @@ async def delete_group(
     return JSONResponse(content="Группа удалена")
 
 
-@groups_router.get("/group/{group_id}", response_model=List[GroupResponse], status_code=HTTPStatus.OK)
+@groups_router.get("/group/{group_id}", status_code=HTTPStatus.OK)
 async def get_group_posts(group_id: int, db: AsyncSession = Depends(get_async_session)):
     group = await db.execute(select(Group).filter(Group.id == group_id))
     if not group:
@@ -82,49 +82,37 @@ async def get_group_posts(group_id: int, db: AsyncSession = Depends(get_async_se
     posts = await db.execute(select(Post).filter(Post.group_id == group_id))
     group_posts = posts.unique().scalars().all()
 
-    return [serialize_group_posts(post) for post in group_posts]
+    return group_posts
 
 
 @groups_router.post("/group/{group_id}/create_post", response_model=PostResponse, status_code=HTTPStatus.CREATED)
-async def create_group_post(
-    post: PostCreate,
+async def create_post(
+    text: str = Form(...),
+    image: UploadFile = Form(...),
     user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session),
-    group_id: int = Path(...),
 ):
-    image_data = None
-    if post.image:
-        image_data = base64.b64decode(post.image)
+    image_data = await image.read()
+    image_filename = f"{uuid.uuid4()}.jpg"
     user_id = user.get('id')
-    is_member = await db.execute(
-        select(exists().where((GroupSubscription.group_id == group_id) & (GroupSubscription.user_id == user_id)))
-    )
-    if not is_member.scalar():
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail="Вы не являетесь участником этой группы."
-        )
-
     new_post = Post(
-        text=post.text,
+        text=text,
         author_id=user_id,
-        group_id=group_id,
         created_at=datetime.now(),
+        image=image.filename
     )
+    async with db.begin() as tx:
+        db.add(new_post)
+        await tx.commit()
 
     async with db.begin():
-        db.add(new_post)
-        await db.flush()
-
+        await db.refresh(new_post)
     if image_data:
-        image_document = {
-            "post_id": str(new_post.id),
-            "image_data": Binary(image_data),
-            "created_at": datetime.now()
-        }
-        images_collection.insert_one(image_document)
+        image_url = await save_image_async(image_data, image_filename)
+        new_post.image = image_url
 
     return new_post
+
 
 
 @groups_router.post("/group/{group_id}/subscribe", status_code=HTTPStatus.NO_CONTENT)

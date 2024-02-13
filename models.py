@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from DateTime import DateTime
+from bson import Binary
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from db import Base
@@ -89,6 +90,7 @@ class Post(Base):
     created_at = Column(Date, default=datetime.date)
     author_id = Column(Integer, ForeignKey("users.id"))
     group_id = Column(Integer, ForeignKey("groups.id"), nullable=True)
+    image = Column(String, nullable=True)
 
     comments = relationship("Comment", back_populates="post")
     author = relationship("User", back_populates="posts")

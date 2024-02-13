@@ -1,6 +1,8 @@
 import base64
 
 from models import Post, Comment, User, Group
+from posts.posts_models import CommentResponse
+
 
 def serialize_user(user: User) -> dict:
     return {
@@ -38,5 +40,12 @@ def serialize_post(post):
         "author": serialize_user(post.author),
         "comments": [serialize_comment(comment) for comment in post.comments],
         "created_at": post.created_at,
-        "images": [serialize_image(image) for image in post.images],
+        "images": post.image,
     }
+
+
+def serialize_post_with_comments(post: Post):
+    serialized_post = serialize_post(post)
+    serialized_post["comments"] = [serialize_comment(comment) for comment in post.comments]
+    return serialized_post
+
