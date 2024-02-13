@@ -9,7 +9,6 @@
 [![Docker](https://img.shields.io/badge/Docker-%23FF3535.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Celery](https://img.shields.io/badge/Celery-%23FFFFFF.svg?style=for-the-badge&logo=celery&logoColor=black)](http://www.celeryproject.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-%23FF3535.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-ffffff.svg?style=for-the-badge&logo=mongodb&logoColor=47A248)](https://www.mongodb.com/)
 
 ---
 

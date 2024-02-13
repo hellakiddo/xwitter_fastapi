@@ -3,11 +3,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 class GroupResponse(BaseModel):
-    # name: str
-    # description: Optional[str]
-    # id: Optional[int]
-    # author_id: Optional[int]
-    group_posts: List
+    pass
 
 class GroupCreate(GroupResponse):
     pass

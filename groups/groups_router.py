@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime
 from http import HTTPStatus
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile, Path
 from sqlalchemy.exc import IntegrityError
@@ -12,7 +11,6 @@ from starlette.responses import JSONResponse
 
 from auth.auth_router import get_current_user
 from db import get_async_session
-from posts.posts_models import PostResponse
 from posts.posts_router import save_image_async
 from .groups_models import GroupResponse, GroupCreate, GroupPostResponse
 from models import Group, Post, GroupSubscription
