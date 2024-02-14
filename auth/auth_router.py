@@ -116,7 +116,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
         )
 
     token = create_access_token(
-        user.username, user.id, 'feed', timedelta(minutes=20)
+        user.username, user.id, 'feed', timedelta(minutes=100)
     )
 
     return {'access_token': token, 'token_type': 'bearer'}

@@ -17,6 +17,7 @@ async def get_feed_posts(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session)
 ):
+    """ НЕ РАБОТАЕТ """
     user_id = current_user.get('id')
 
     async with db.begin():

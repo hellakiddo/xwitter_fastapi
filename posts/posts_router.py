@@ -20,10 +20,10 @@ posts = APIRouter(tags=['posts'])
 
 @posts.post("/create_post", response_model=PostResponse, status_code=HTTPStatus.CREATED)
 async def create_post(
-    text: str = Form(...),
-    image: UploadFile = Form(...),
-    user: dict = Depends(get_current_user),
-    db: AsyncSession = Depends(get_async_session),
+        text: str = Form(...),
+        image: UploadFile = Form(...),
+        user: dict = Depends(get_current_user),
+        db: AsyncSession = Depends(get_async_session),
 ):
     image_data = await image.read()
     image_filename = f"{uuid.uuid4()}.jpg"
@@ -56,11 +56,12 @@ async def save_image_async(image_data, image_filename):
         img_file.write(image_data)
     return f"/uploaded_images/{image_filename}"
 
+
 @posts.delete("/posts/{post_id}/delete_post", status_code=HTTPStatus.NO_CONTENT)
 async def delete_post(
-    post_id: int = Path(...),
-    user: dict = Depends(get_current_user, ),
-    db: AsyncSession = Depends(get_async_session)
+        post_id: int = Path(...),
+        user: dict = Depends(get_current_user, ),
+        db: AsyncSession = Depends(get_async_session)
 ):
     user_id = user.get('id')
     post = await db.execute(select(Post).filter(Post.author_id == user_id, Post.id == post_id))
@@ -70,6 +71,7 @@ async def delete_post(
             status_code=HTTPStatus.NOT_FOUND,
             detail='Нет прав на удаление или пост не найден.'
         )
+
     if not db.is_active:
         async with db.begin():
             await db.delete(post_found)
@@ -80,14 +82,14 @@ async def delete_post(
 
     return JSONResponse(content='Пост удален.')
 
+
 @posts.post("/posts/{post_id}/create_comment", response_model=CommentResponse, status_code=HTTPStatus.CREATED)
 async def create_comment(
-    comment: CommentCreate,
-    user: dict = Depends(get_current_user),
-    db: AsyncSession = Depends(get_async_session),
-    post_id: int = Path(...),
+        comment: CommentCreate,
+        user: dict = Depends(get_current_user),
+        db: AsyncSession = Depends(get_async_session),
+        post_id: int = Path(...),
 ):
-
     new_comment = Comment(
         text=comment.text,
         user_id=user["id"],
@@ -137,6 +139,7 @@ async def delete_comment(
     await db.commit()
 
     return JSONResponse(content="Удален коммент")
+
 
 @posts.get("/", response_model=List[PostWithCommentsResponse])
 async def get_all_posts(db: AsyncSession = Depends(get_async_session)):

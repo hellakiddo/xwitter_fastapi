@@ -24,6 +24,12 @@ async def create_subscription(
     db: AsyncSession = Depends(get_async_session),
     user_id: int = Path(...),
 ):
+    existing_subscription = await db.execute(
+        select(Subscription).filter_by(
+            follower_id=user['id'], following_id=user_id)
+    )
+    if existing_subscription.scalar():
+        return JSONResponse('Подписка уже существует', status_code=HTTPStatus.CONFLICT)
     new_subscription = Subscription(
         follower_id=user['id'],
         following_id=user_id
@@ -39,7 +45,7 @@ async def create_subscription(
 
 
 @subscriptions.delete(
-    "/subscriptions/{subscription_id}/delete_subscription",
+    "/users/{subscription_id}/delete_subscription",
     status_code=HTTPStatus.NO_CONTENT
 )
 async def delete_subscription(
