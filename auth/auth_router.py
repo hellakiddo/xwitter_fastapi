@@ -56,7 +56,7 @@ async def get_current_user(token: str = Depends(oauth2_bearer), db: AsyncSession
 
         if not user:
             raise HTTPException(
-                status_code=HTTPStatus.UNAUTHORIZED,
+                status_code=HTTPStatus.NOT_FOUND,
                 detail='Пользователь не найден.'
             )
 
@@ -69,7 +69,7 @@ async def get_current_user(token: str = Depends(oauth2_bearer), db: AsyncSession
     except JWTError:
         raise HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Токен сдох кажется.'
+            detail='Токен сдох кажется. Не авторизован'
         )
 
 

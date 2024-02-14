@@ -40,6 +40,7 @@ async def create_post(
 
     async with db.begin():
         await db.refresh(new_post)
+
     if image_data:
         image_url = await save_image_async(image_data, image_filename)
         new_post.image = image_url
