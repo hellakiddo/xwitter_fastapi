@@ -6,11 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="72c0bfbf-9f61-46cc-8a17-590397c9b163" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic_xwitter/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/alembic_xwitter/env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auth/auth_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/auth/auth_router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/posts/posts_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/posts/posts_router.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/subscription/sub_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/subscription/sub_router.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,6 +87,11 @@
           <url>file://$PROJECT_DIR$/models.py</url>
           <line>8</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/subscription/sub_router.py</url>
+          <line>50</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -28,6 +28,8 @@ async def authenticate_user(username: str, password: str, db: AsyncSession):
         result = await db.execute(select(User).filter(User.username == username))
         user = result.scalars().first()
 
+    if not user.is_active:
+        return None
     if not user or not sha256_crypt.verify(password, user.hashed_password):
         return None
     return user
