@@ -32,7 +32,7 @@ async def create_post(
         text=text,
         author_id=user_id,
         created_at=datetime.datetime.now(),
-        image=image_filename
+        image=f'/uploaded_images/{image_filename}'
     )
     async with db.begin() as tx:
         db.add(new_post)

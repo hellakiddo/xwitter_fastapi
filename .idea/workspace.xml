@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="72c0bfbf-9f61-46cc-8a17-590397c9b163" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/feed/feed_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/feed/feed_router.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/groups/groups_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/groups/groups_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/groups/groups_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/groups/groups_router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/posts_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/posts/posts_router.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,11 +88,6 @@
           <url>file://$PROJECT_DIR$/models.py</url>
           <line>8</line>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/feed/feed_router.py</url>
-          <line>12</line>
-          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import Depends, APIRouter
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,28 +8,23 @@ from sqlalchemy.orm import joinedload
 from auth.auth_router import get_current_user
 from db import get_async_session
 from models import Subscription, GroupSubscription, Post
-from posts.serializers import serialize_post
+from posts.posts_models import PostWithCommentsResponse
 
 feed_router = APIRouter(tags=['feed'])
 
-@feed_router.get("/feed")
+@feed_router.get("/feed", response_model=List[PostWithCommentsResponse])
 async def get_feed_posts(
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_session)
 ):
-    """ Не работает. """
     user_id = current_user.get('id')
 
     async with db.begin():
         following_user_ids = await get_following_user_ids(db, user_id)
         following_group_ids = await get_following_group_ids(db, user_id)
-
         user_posts = await get_posts(db, Post.author_id.in_(following_user_ids), db)
         group_posts = await get_posts(db, Post.group_id.in_(following_group_ids), db)
-
-        all_posts = user_posts + group_posts
-        serialized_posts = [serialize_post(post) for post in all_posts]
-        return serialized_posts
+        return user_posts + group_posts
 
 async def get_posts(db: AsyncSession, condition, transaction: AsyncSession):
     posts = await transaction.execute(
