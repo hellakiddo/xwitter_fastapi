@@ -26,9 +26,9 @@ async def get_feed_posts(
         group_posts = await get_posts(db, Post.group_id.in_(following_group_ids), db)
         return user_posts + group_posts
 
-async def get_posts(db: AsyncSession, condition, transaction: AsyncSession):
+async def get_posts(db: AsyncSession, query, transaction: AsyncSession):
     posts = await transaction.execute(
-        select(Post).filter(condition).options(joinedload(Post.comments), joinedload(Post.author))
+        select(Post).filter(query).options(joinedload(Post.comments), joinedload(Post.author))
     )
     return posts.unique().scalars().all()
 

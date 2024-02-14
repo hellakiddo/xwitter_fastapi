@@ -6,7 +6,7 @@ from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, Path, Form, UploadFile
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import joinedload
 from starlette.responses import JSONResponse
 from sqlalchemy.future import select
 
