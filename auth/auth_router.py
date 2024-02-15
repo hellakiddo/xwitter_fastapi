@@ -41,7 +41,7 @@ def create_access_token(username: str, user_id: int, role: str, expires_delta: t
     encode.update({'exp': expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
-
+# функции в отдельный файл db_comm/conn/utils
 async def get_current_user(token: str = Depends(oauth2_bearer), db: AsyncSession = Depends(get_async_session)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -164,7 +164,7 @@ async def activate_user(activation_code: str, db: AsyncSession = Depends(get_asy
                 detail='Пользователь с указанным кодом активации не найден.'
             )
         user.is_active = True
-        user.activation_code = None
+        user.activation_code = 'Пользователь активирован'
         await db.commit()
 
     return JSONResponse(

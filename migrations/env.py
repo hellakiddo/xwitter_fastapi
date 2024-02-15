@@ -4,10 +4,8 @@ import sqlalchemy
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from models import *
-from db import metadata
-
-from config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
+from config import DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASS
+from models import metadata
 
 config = context.config
 
@@ -23,7 +21,6 @@ if config.config_file_name is not None:
 
 target_metadata = metadata
 
-sqlalchemy.url = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")

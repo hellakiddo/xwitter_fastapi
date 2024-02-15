@@ -1,11 +1,73 @@
 from datetime import datetime
 
-from DateTime import DateTime
-from bson import Binary
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date, MetaData, Table
 from sqlalchemy.orm import relationship
+
 from db import Base
 
+# в отдельную папку и
+
+
+metadata = MetaData()
+
+subscriptions = Table(
+    "subscriptions",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("follower_id", Integer, ForeignKey("users.id")),
+    Column("following_id", Integer, ForeignKey("users.id")),
+)
+
+group_subscriptions = Table(
+    "group_subscriptions",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("user_id", Integer, ForeignKey("users.id")),
+    Column("group_id", Integer, ForeignKey("groups.id")),
+)
+
+groups = Table(
+    "groups",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("name", String, unique=True, index=True),
+    Column("description", String),
+    Column("author_id", Integer, ForeignKey("users.id")),
+)
+
+users = Table(
+    "users",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("email", String, unique=True, index=True),
+    Column("username", String, unique=True, index=True),
+    Column("first_name", String),
+    Column("last_name", String),
+    Column("hashed_password", String),
+    Column("is_active", Boolean, default=True),
+    Column("activation_code", String, unique=True, nullable=False),
+)
+
+comments = Table(
+    "comments",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("text", String),
+    Column("created_at", Date, default=datetime.date),
+    Column("post_id", Integer, ForeignKey("posts.id")),
+    Column("user_id", Integer, ForeignKey("users.id")),
+)
+
+posts = Table(
+    "posts",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("text", String),
+    Column("created_at", Date, default=datetime.date),
+    Column("author_id", Integer, ForeignKey("users.id")),
+    Column("group_id", Integer, ForeignKey("groups.id"), nullable=True),
+    Column("image", String, nullable=True),
+)
 class Subscription(Base):
     __tablename__ = "subscriptions"
 
@@ -16,6 +78,7 @@ class Subscription(Base):
     follower = relationship("User", foreign_keys=[follower_id], back_populates="following")
     following = relationship("User", foreign_keys=[following_id], back_populates="followers")
 
+
 class GroupSubscription(Base):
     __tablename__ = "group_subscriptions"
 
@@ -25,6 +88,7 @@ class GroupSubscription(Base):
 
     user = relationship("User", back_populates="group_subscriptions")
     group = relationship("Group", back_populates="user_subscriptions")
+
 
 class Group(Base):
     __tablename__ = "groups"
@@ -44,6 +108,7 @@ class Group(Base):
         overlaps="group_subscriptions,user_subscriptions",
         viewonly=True
     )
+
 
 class User(Base):
     __tablename__ = "users"
@@ -70,6 +135,7 @@ class User(Base):
         viewonly=True
     )
 
+
 class Comment(Base):
     __tablename__ = "comments"
 
@@ -82,6 +148,7 @@ class Comment(Base):
     user = relationship("User")
     post = relationship("Post", back_populates="comments")
 
+# все модели разделить
 class Post(Base):
     __tablename__ = "posts"
 
@@ -95,3 +162,9 @@ class Post(Base):
     comments = relationship("Comment", back_populates="post")
     author = relationship("User", back_populates="posts")
     group = relationship("Group", back_populates="posts")
+
+
+class Chat(Base):
+    __tablename__ = "chats"
+
+    id = Column(Integer, primary_key=True)

@@ -1,6 +1,6 @@
 from celery import Celery
 from auth.send_email import send_confirmation_email
-
+# celery в отдельный файл config
 app = Celery('xwitter')
 app.conf.broker_url = 'redis://redis:6379'
 app.conf.result_backend = 'redis://redis:6379'
