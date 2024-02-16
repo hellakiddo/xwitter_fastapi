@@ -1,11 +1,10 @@
 from logging.config import fileConfig
 
-import sqlalchemy
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from config import DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASS
-from models import metadata
+from database.tables import metadata
 
 config = context.config
 

@@ -11,8 +11,8 @@ from starlette.responses import JSONResponse
 from sqlalchemy.future import select
 
 from auth.auth_router import get_current_user
-from db import get_async_session
-from models import Post, Comment
+from database.db import get_async_session
+from database.models import Post, Comment
 from .posts_models import CommentCreate, CommentResponse, PostResponse, PostWithCommentsResponse
 
 posts = APIRouter(tags=['posts'])

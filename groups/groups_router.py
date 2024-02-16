@@ -10,10 +10,10 @@ from sqlalchemy.orm import selectinload
 from starlette.responses import JSONResponse
 
 from auth.auth_router import get_current_user
-from db import get_async_session
+from database.db import get_async_session
 from posts.posts_router import save_image_async
 from .groups_models import GroupResponse, GroupCreate, GroupPostResponse
-from models import Group, Post, GroupSubscription
+from database.models import Group, Post, GroupSubscription
 from .serializers import serialize_group
 
 groups_router = APIRouter(tags=["groups"])

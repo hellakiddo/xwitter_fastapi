@@ -1,7 +1,6 @@
 import base64
 
-from models import Post, Comment, User, Group
-from posts.posts_models import CommentResponse
+from database.models import Post, Comment, User, Group
 
 
 def serialize_user(user: User) -> dict:

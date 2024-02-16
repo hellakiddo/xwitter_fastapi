@@ -7,8 +7,8 @@ from sqlalchemy.future import select
 from starlette.responses import JSONResponse
 
 from auth.auth_router import get_current_user
-from db import get_async_session
-from models import Subscription, User
+from database.db import get_async_session
+from database.models import Subscription, User
 from .serializers import serialize_subscription, serialize_user
 from .sub_models import SubscriptionCreate, AllSubscriptionResponse
 

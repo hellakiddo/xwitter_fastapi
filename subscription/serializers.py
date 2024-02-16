@@ -1,4 +1,4 @@
-from models import User, Subscription
+from database.models import User, Subscription
 
 async def serialize_user(user: User):
     return {

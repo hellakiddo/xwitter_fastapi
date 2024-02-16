@@ -34,10 +34,10 @@ services:
     image: redis:6.2-alpine
 
 
-  celery_worker:
-    container_name: celery_worker
+  celery:
+    container_name: celery
     build: .
-    command: celery -A celery_worker worker --loglevel=info
+    command: celery -A celery_worker.celery worker --loglevel=info
     volumes:
       - .:/app
     environment:
