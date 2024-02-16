@@ -34,12 +34,9 @@ async def create_post(
         created_at=datetime.datetime.now(),
         image=f'/uploaded_images/{image_filename}'
     )
-    async with db.begin() as tx:
-        db.add(new_post)
-        await tx.commit()
-
-    async with db.begin():
-        await db.refresh(new_post)
+    db.add(new_post)
+    await db.commit()
+    await db.refresh(new_post)
 
     if image_data:
         image_url = await save_image_async(image_data, image_filename)
@@ -71,14 +68,8 @@ async def delete_post(
             status_code=HTTPStatus.NOT_FOUND,
             detail='Нет прав на удаление или пост не найден.'
         )
-
-    if not db.is_active:
-        async with db.begin():
-            await db.delete(post_found)
-            await db.commit()
-    else:
-        await db.delete(post_found)
-        await db.commit()
+    await db.delete(post_found)
+    await db.commit()
 
     return JSONResponse(content='Пост удален.')
 
