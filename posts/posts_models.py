@@ -36,13 +36,16 @@ class CommentResponse(BaseModel):
     post_id: int
     created_at: date
 
+    class Config:
+        orm_mode = True
+
 class PostWithCommentsResponse(BaseModel):
     id: int
     text: str
     created_at: date
     author_id: Optional[int]
     image: Optional[str]
-    comments: List
+    comments: List[CommentResponse]
 
     class Config:
         orm_mode = True
