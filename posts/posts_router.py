@@ -137,5 +137,4 @@ async def delete_comment(
 async def get_all_posts(db: AsyncSession = Depends(get_async_session)):
     async with db.begin():
         all_posts = await db.execute(select(Post).options(joinedload(Post.comments)))
-        posts = all_posts.unique().scalars().all()
-    return posts
+    return all_posts.unique().scalars().all()
