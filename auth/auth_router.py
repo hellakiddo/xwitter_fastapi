@@ -9,7 +9,7 @@ from starlette.responses import JSONResponse
 from sqlalchemy.future import select
 
 from database.db import get_async_session
-from .auth_models import CreateUser, Token, UserPassword
+from schemas.auth_models import CreateUser, Token, UserPassword
 from database.models import User
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from celery_worker.celery import send_confirm_email_task

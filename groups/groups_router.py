@@ -12,7 +12,7 @@ from starlette.responses import JSONResponse
 from auth.auth_router import get_current_user
 from database.db import get_async_session
 from posts.posts_router import save_image_async
-from .groups_models import GroupResponse, GroupCreate, GroupPostResponse
+from schemas.groups_models import GroupResponse, GroupCreate, GroupPostResponse
 from database.models import Group, Post, GroupSubscription
 from .serializers import serialize_group
 

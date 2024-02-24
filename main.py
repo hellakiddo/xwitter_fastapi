@@ -6,7 +6,6 @@ from auth.auth_router import auth
 from groups.groups_router import groups_router
 from feed.feed_router import feed_router
 
-# pep8 вынести функции за пределы роутера
 
 app = FastAPI()
 app.include_router(posts)

@@ -13,7 +13,7 @@ from sqlalchemy.future import select
 from auth.auth_router import get_current_user
 from database.db import get_async_session
 from database.models import Post, Comment
-from .posts_models import CommentCreate, CommentResponse, PostResponse, PostWithCommentsResponse
+from schemas.posts_models import CommentCreate, CommentResponse, PostResponse, PostWithCommentsResponse
 
 posts = APIRouter(tags=['posts'])
 
@@ -34,6 +34,7 @@ async def create_post(
         created_at=datetime.datetime.now(),
         image=f'/uploaded_images/{image_filename}'
     )
+    # Надо исправить
     db.add(new_post)
     await db.commit()
     await db.refresh(new_post)

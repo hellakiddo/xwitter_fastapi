@@ -8,7 +8,7 @@ from sqlalchemy.orm import joinedload
 from auth.auth_router import get_current_user
 from database.db import get_async_session
 from database.models import Subscription, GroupSubscription, Post
-from posts.posts_models import PostWithCommentsResponse
+from schemas.posts_models import PostWithCommentsResponse
 
 feed_router = APIRouter(tags=['feed'])
 

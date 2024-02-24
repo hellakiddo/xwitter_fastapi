@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date, Text, DateTime
 from sqlalchemy.orm import relationship
 
 from .db import Base
-
 
 
 class Subscription(Base):
@@ -80,7 +79,7 @@ class Comment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String)
-    created_at = Column(Date, default=datetime.date)
+    created_at = Column(Date, default=datetime.now)
     post_id = Column(Integer, ForeignKey("posts.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
 
@@ -94,7 +93,7 @@ class Post(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String)
-    created_at = Column(Date, default=datetime.date)
+    created_at = Column(Date, default=datetime.now)
     author_id = Column(Integer, ForeignKey("users.id"))
     group_id = Column(Integer, ForeignKey("groups.id"), nullable=True)
     image = Column(String, nullable=True)
@@ -104,7 +103,20 @@ class Post(Base):
     group = relationship("Group", back_populates="posts")
 
 
-class Chat(Base):
-    __tablename__ = "chats"
 
-    id = Column(Integer, primary_key=True)
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)
+    room_id = Column(Integer, index=True)
+    content = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+
+class PrivateMessage(Base):
+    __tablename__ = "private_messages"
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(Integer, index=True)
+    receiver_id = Column(Integer, index=True)
+    content = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)

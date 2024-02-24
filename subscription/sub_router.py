@@ -10,7 +10,7 @@ from auth.auth_router import get_current_user
 from database.db import get_async_session
 from database.models import Subscription, User
 from .serializers import serialize_subscription, serialize_user
-from .sub_models import SubscriptionCreate, AllSubscriptionResponse
+from schemas.sub_models import SubscriptionCreate, AllSubscriptionResponse
 
 subscriptions = APIRouter(tags=['subscriptions'])
 
